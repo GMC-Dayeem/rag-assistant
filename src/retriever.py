@@ -1,0 +1,40 @@
+import json
+from sentence_transformers import SentenceTransformer
+import chromadb
+import os
+
+
+
+# Load model
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Create DB
+client = chromadb.Client()
+try:
+    collection = client.get_collection("docs")
+except:
+    collection = client.create_collection("docs")
+# Load documents
+
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+file_path = os.path.join(base_dir, "data", "docs.json")
+
+with open(file_path, "r", encoding="utf-8") as f:
+    docs = json.load(f)
+
+
+# Add documents to DB
+if collection.count() == 0:
+    embeddings = model.encode(docs).tolist()
+    collection.add(
+        documents=docs,
+        embeddings=embeddings,
+        ids=[str(i) for i in range(len(docs))]
+    )
+
+def retrieve(query: str, k: int = 3):
+    query_embedding = model.encode([query]).tolist()
+    results = collection.query(query_embeddings=query_embedding, n_results=k)
+    docs = results.get("documents", [[]])[0]
+    
+    return docs if docs else ["No relevant documents found."]

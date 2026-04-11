@@ -1,0 +1,163 @@
+import streamlit as st
+import requests
+import uuid
+
+st.set_page_config(
+    page_title="Startup Support Assistant",
+    page_icon="💬",
+    layout="centered"
+)
+
+API_URL = "http://127.0.0.1:8000"
+
+# ---------- Session State ----------
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# ---------- Helpers ----------
+def send_feedback(session_id, question, answer, rating):
+    return requests.post(
+        f"{API_URL}/feedback",
+        json={
+            "session_id": session_id,
+            "question": question,
+            "answer": answer,
+            "rating": rating
+        },
+        timeout=30
+    )
+
+def clear_chat():
+    st.session_state.messages = []
+    st.session_state.session_id = str(uuid.uuid4())
+
+# ---------- Sidebar ----------
+with st.sidebar:
+    st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
+
+    st.header("Session")
+    st.caption(f"ID: {st.session_state.session_id[:8]}")
+    if st.button("Clear chat", use_container_width=True):
+        clear_chat()
+        st.rerun()
+
+    
+    st.divider()
+    st.markdown("## About")
+    st.caption(
+        "A RAG-based startup support assistant with retrieval, chat memory, and feedback logging."
+    )
+
+# ---------- Header ----------
+st.markdown(
+    """
+    <h1 style='text-align: center; margin-bottom: 0.2rem;'>💬 Startup Support Assistant</h1>
+    <p style='text-align: center; color: gray; margin-top: 0;'>
+        Ask questions about the knowledge base
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
+# ---------- Chat History ----------
+for i, msg in enumerate(st.session_state.messages):
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+        if msg["role"] == "assistant":
+            if msg.get("sources"):
+                with st.expander("Sources"):
+                    for s in msg["sources"]:
+                        st.write("- " + s)
+
+            if "feedback_submitted" not in msg:
+                msg["feedback_submitted"] = False
+
+            if msg["feedback_submitted"]:
+                display_rating = (
+                    "Helpful" if msg.get("feedback_rating") == "helpful" else "Not Helpful"
+                )
+                st.caption(f"✅ Feedback saved: {display_rating}")
+            else:
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    if st.button("👍 Helpful", key=f"helpful_{i}", use_container_width=True):
+                        feedback_response = send_feedback(
+                            st.session_state.session_id,
+                            msg.get("question", ""),
+                            msg["content"],
+                            "helpful"
+                        )
+                        if feedback_response.status_code == 200:
+                            msg["feedback_submitted"] = True
+                            msg["feedback_rating"] = "helpful"
+                            st.rerun()
+                        else:
+                            st.error(f"Feedback failed: {feedback_response.text}")
+
+                with col2:
+                    if st.button("👎 Not Helpful", key=f"not_helpful_{i}", use_container_width=True):
+                        feedback_response = send_feedback(
+                            st.session_state.session_id,
+                            msg.get("question", ""),
+                            msg["content"],
+                            "not_helpful"
+                        )
+                        if feedback_response.status_code == 200:
+                            msg["feedback_submitted"] = True
+                            msg["feedback_rating"] = "not_helpful"
+                            st.rerun()
+                        else:
+                            st.error(f"Feedback failed: {feedback_response.text}")
+
+# ---------- User Input ----------
+user_input = st.chat_input("Ask a question about the knowledge base")
+
+if user_input:
+    # show user message immediately
+    st.session_state.messages.append({
+        "role": "user",
+        "content": user_input
+    })
+
+    with st.chat_message("user"):
+        st.markdown(user_input)
+
+    # nicer loading state
+    with st.chat_message("assistant"):
+        with st.spinner("Searching the knowledge base and generating a response..."):
+            try:
+                response = requests.post(
+                    f"{API_URL}/ask",
+                    json={
+                        "query": user_input,
+                        "session_id": st.session_state.session_id
+                    },
+                    timeout=60
+                )
+            except requests.RequestException as e:
+                st.error(f"Request failed: {e}")
+                st.stop()
+
+    if response.status_code == 200:
+        data = response.json()
+        answer = data["answer"]
+        sources = data["sources"]
+
+        assistant_message = {
+            "role": "assistant",
+            "content": answer,
+            "sources": sources,
+            "question": user_input,
+            "feedback_submitted": False
+        }
+
+        st.session_state.messages.append(assistant_message)
+        st.rerun()
+    else:
+        st.error(f"Failed to get response from API. Status code: {response.status_code}")
+        st.write(response.text)

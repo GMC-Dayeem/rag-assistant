@@ -1,0 +1,38 @@
+[
+  {
+    "session_id": "23c8f95a-94d4-4505-882c-c6e8b630448b",
+    "question": "i want answers",
+    "answer": "Please specify your questions so I can provide the answers you need.",
+    "rating": "helpful"
+  },
+  {
+    "session_id": "23c8f95a-94d4-4505-882c-c6e8b630448b",
+    "question": "what do you know?",
+    "answer": "I know that your data is stored securely and encrypted at rest, your account will be locked after multiple failed login attempts, and customer support is available 24/7 via live chat or email.",
+    "rating": "helpful"
+  },
+  {
+    "session_id": "23c8f95a-94d4-4505-882c-c6e8b630448b",
+    "question": "anything else you can help  me with?",
+    "answer": "I can help you with account recovery, password resets, and guiding you on how to contact support through the help center. Let me know if you need assistance with any of these or something else!",
+    "rating": "helpful"
+  },
+  {
+    "session_id": "23c8f95a-94d4-4505-882c-c6e8b630448b",
+    "question": "could?",
+    "answer": "I don't know based on the available information.",
+    "rating": "not_helpful"
+  },
+  {
+    "session_id": "23c8f95a-94d4-4505-882c-c6e8b630448b",
+    "question": "that's all; thank you",
+    "answer": "You're welcome! If you need any more help, feel free to ask. Have a great day!",
+    "rating": "helpful"
+  },
+  {
+    "session_id": "e70509f3-3e99-4d53-bbb1-6e69a3d2a8cf",
+    "question": "help",
+    "answer": "To get help, submit a ticket through the help center.",
+    "rating": "not_helpful"
+  }
+]
