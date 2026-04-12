@@ -42,7 +42,7 @@ def clear_chat():
 
 # ---------- Sidebar ----------
 with st.sidebar:
-    st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
     st.header("Session")
     st.caption(f"ID: {st.session_state.session_id[:8]}")
