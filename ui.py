@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-API_URL = "http://127.0.0.1:8000"
+# API_URL = "http://127.0.0.1:8000"
 
 # ---------- Session State ----------
 if "session_id" not in st.session_state:
@@ -129,10 +129,10 @@ for i, msg in enumerate(st.session_state.messages):
                             st.session_state.session_id,
                             msg.get("question", ""),
                             msg["content"],
-                            "not helpful"
+                            "not_helpful"
                         )
                         msg["feedback_submitted"] = True
-                        msg["feedback_rating"] = "not helpful"
+                        msg["feedback_rating"] = "not_helpful"
                         st.rerun()
 
 # ---------- User Input ----------
@@ -163,25 +163,27 @@ if user_input:
                 answer = result["answer"]
                 sources = result["sources"]
                 
-            except requests.RequestException as e:
-                st.error(f"Request failed: {e}")
+            # except requests.RequestException as e:
+            except Exception as e:
+                # st.error(f"Request failed: {e}")
+                st.error(f"Failed to generate response: {e}")
                 st.stop()
 
-    if response.status_code == 200:
-        data = response.json()
-        answer = data["answer"]
-        sources = data["sources"]
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     answer = data["answer"]
+    #     sources = data["sources"]
 
-        assistant_message = {
-            "role": "assistant",
-            "content": answer,
-            "sources": sources,
-            "question": user_input,
-            "feedback_submitted": False
-        }
+    assistant_message = {
+        "role": "assistant",
+        "content": answer,
+        "sources": sources,
+        "question": user_input,
+        "feedback_submitted": False
+    }
 
-        st.session_state.messages.append(assistant_message)
-        st.rerun()
-    else:
-        st.error(f"Failed to get response from API. Status code: {response.status_code}")
-        st.write(response.text)
+    st.session_state.messages.append(assistant_message)
+    st.rerun()
+    # else:
+    #     st.error(f"Failed to get response from API. Status code: {response.status_code}")
+    #     st.write(response.text)
