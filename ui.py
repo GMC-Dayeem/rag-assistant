@@ -54,19 +54,30 @@ with st.sidebar:
     st.divider()
     st.markdown("## About")
     st.caption(
-        "A RAG-based startup support assistant with retrieval, chat memory, and feedback logging."
+    "An AI chatbot that answers startup support questions using a custom knowledge base. "
+    "Built with semantic search, LLMs, and user feedback tracking."
     )
+    st.info("⚡ Powered by semantic search + LLM (RAG system)")
 
 # ---------- Header ----------
-st.markdown(
-    """
-    <h1 style='text-align: center; margin-bottom: 0.2rem;'>💬 Startup Support Assistant</h1>
-    <p style='text-align: center; color: gray; margin-top: 0;'>
-        Ask questions about the knowledge base
-    </p>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<h1 style='text-align: center;'>💬 Startup Support AI Assistant</h1>
+
+<p style='text-align: center; color: gray; max-width: 700px; margin: auto;'>
+This is an AI-powered customer support assistant built using Retrieval-Augmented Generation (RAG).
+It answers questions based on a predefined knowledge base (e.g., billing, subscriptions, account issues).
+</p>
+""", unsafe_allow_html=True)
+
+st.markdown("### 💡 Try asking:")
+
+st.markdown("""
+- How do I cancel my subscription?  
+- How can I reset my password?  
+- When will I get my refund?  
+- How do I update billing info?
+""")
+
 
 # ---------- Chat History ----------
 for i, msg in enumerate(st.session_state.messages):
