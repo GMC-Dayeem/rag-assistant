@@ -1,7 +1,7 @@
 import streamlit as st
 # import requests
 import uuid
-from src.pipeline import ask
+# from src.pipeline import ask
 from src.feedback import save_feedback
 from src.web_pipeline import ask_website
 
