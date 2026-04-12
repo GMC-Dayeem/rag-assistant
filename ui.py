@@ -3,6 +3,7 @@ import streamlit as st
 import uuid
 from src.pipeline import ask
 from src.feedback import save_feedback
+from src.web_pipeline import ask_website
 
 st.set_page_config(
     page_title="Startup Support Assistant",
@@ -147,10 +148,65 @@ for i, msg in enumerate(st.session_state.messages):
                         st.rerun()
 
 # ---------- User Input ----------
-user_input = st.chat_input("Ask a question about the knowledge base")
+website_url = st.text_input("Website URL", placeholder="https://example.com")
+user_input = st.chat_input("Ask a question about this website")
+# user_input = st.chat_input("Ask a question about the knowledge base")
+
+# if user_input:
+#     # show user message immediately
+#     st.session_state.messages.append({
+#         "role": "user",
+#         "content": user_input
+#     })
+
+#     with st.chat_message("user"):
+#         st.markdown(user_input)
+
+#     # nicer loading state
+#     with st.chat_message("assistant"):
+#         with st.spinner("Searching the knowledge base and generating a response..."):
+#             try:
+#                 # response = requests.post(
+#                 #     f"{API_URL}/ask",
+#                 #     json={
+#                 #         "query": user_input,
+#                 #         "session_id": st.session_state.session_id
+#                 #     },
+#                 #     timeout=60
+#                 result = ask(user_input, session_id=st.session_state.session_id)
+#                 answer = result["answer"]
+#                 sources = result["sources"]
+                
+#             # except requests.RequestException as e:
+#             except Exception as e:
+#                 # st.error(f"Request failed: {e}")
+#                 st.error(f"Failed to generate response: {e}")
+#                 st.stop()
+
+#     # if response.status_code == 200:
+#     #     data = response.json()
+#     #     answer = data["answer"]
+#     #     sources = data["sources"]
+
+#     assistant_message = {
+#         "role": "assistant",
+#         "content": answer,
+#         "sources": sources,
+#         "question": user_input,
+#         "feedback_submitted": False
+#     }
+
+#     st.session_state.messages.append(assistant_message)
+#     st.rerun()
+#     # else:
+#     #     st.error(f"Failed to get response from API. Status code: {response.status_code}")
+#     #     st.write(response.text)
 
 if user_input:
-    # show user message immediately
+    if not website_url:
+        st.error("Please enter a website URL first.")
+        st.stop()
+
     st.session_state.messages.append({
         "role": "user",
         "content": user_input
@@ -159,31 +215,15 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # nicer loading state
     with st.chat_message("assistant"):
-        with st.spinner("Searching the knowledge base and generating a response..."):
+        with st.spinner("Reading the website and generating a response..."):
             try:
-                # response = requests.post(
-                #     f"{API_URL}/ask",
-                #     json={
-                #         "query": user_input,
-                #         "session_id": st.session_state.session_id
-                #     },
-                #     timeout=60
-                result = ask(user_input, session_id=st.session_state.session_id)
+                result = ask_website(website_url, user_input)
                 answer = result["answer"]
                 sources = result["sources"]
-                
-            # except requests.RequestException as e:
             except Exception as e:
-                # st.error(f"Request failed: {e}")
-                st.error(f"Failed to generate response: {e}")
+                st.error(f"Failed to analyze website: {e}")
                 st.stop()
-
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     answer = data["answer"]
-    #     sources = data["sources"]
 
     assistant_message = {
         "role": "assistant",
@@ -195,6 +235,3 @@ if user_input:
 
     st.session_state.messages.append(assistant_message)
     st.rerun()
-    # else:
-    #     st.error(f"Failed to get response from API. Status code: {response.status_code}")
-    #     st.write(response.text)
