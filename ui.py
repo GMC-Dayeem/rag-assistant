@@ -1,6 +1,8 @@
 import streamlit as st
-import requests
+# import requests
 import uuid
+from src.pipeline import ask
+from src.feedback import save_feedback
 
 st.set_page_config(
     page_title="Startup Support Assistant",
@@ -18,17 +20,21 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # ---------- Helpers ----------
+# def send_feedback(session_id, question, answer, rating):
+#     return requests.post(
+#         f"{API_URL}/feedback",
+#         json={
+#             "session_id": session_id,
+#             "question": question,
+#             "answer": answer,
+#             "rating": rating
+#         },
+#         timeout=30
+#     )
+
 def send_feedback(session_id, question, answer, rating):
-    return requests.post(
-        f"{API_URL}/feedback",
-        json={
-            "session_id": session_id,
-            "question": question,
-            "answer": answer,
-            "rating": rating
-        },
-        timeout=30
-    )
+    save_feedback(session_id, question, answer, rating)
+    return True
 
 def clear_chat():
     st.session_state.messages = []
@@ -86,33 +92,48 @@ for i, msg in enumerate(st.session_state.messages):
 
                 with col1:
                     if st.button("👍 Helpful", key=f"helpful_{i}", use_container_width=True):
-                        feedback_response = send_feedback(
+                        # feedback_response = send_feedback(
+                        #     st.session_state.session_id,
+                        #     msg.get("question", ""),
+                        #     msg["content"],
+                        #     "helpful"
+                        # )
+                        # if feedback_response.status_code == 200:
+                        send_feedback(
                             st.session_state.session_id,
                             msg.get("question", ""),
                             msg["content"],
                             "helpful"
                         )
-                        if feedback_response.status_code == 200:
-                            msg["feedback_submitted"] = True
-                            msg["feedback_rating"] = "helpful"
-                            st.rerun()
-                        else:
-                            st.error(f"Feedback failed: {feedback_response.text}")
+                        msg["feedback_submitted"] = True
+                        msg["feedback_rating"] = "helpful"
+                        st.rerun()
+                        # else:
+                        #     st.error(f"Feedback failed: {feedback_response.text}")
 
                 with col2:
                     if st.button("👎 Not Helpful", key=f"not_helpful_{i}", use_container_width=True):
-                        feedback_response = send_feedback(
+                        # feedback_response = send_feedback(
+                        #     st.session_state.session_id,
+                        #     msg.get("question", ""),
+                        #     msg["content"],
+                        #     "not_helpful"
+                        # )
+                        # if feedback_response.status_code == 200:
+                        #     msg["feedback_submitted"] = True
+                        #     msg["feedback_rating"] = "not_helpful"
+                        #     st.rerun()
+                        # else:
+                        #     st.error(f"Feedback failed: {feedback_response.text}")
+                        send_feedback(
                             st.session_state.session_id,
                             msg.get("question", ""),
                             msg["content"],
-                            "not_helpful"
+                            "not helpful"
                         )
-                        if feedback_response.status_code == 200:
-                            msg["feedback_submitted"] = True
-                            msg["feedback_rating"] = "not_helpful"
-                            st.rerun()
-                        else:
-                            st.error(f"Feedback failed: {feedback_response.text}")
+                        msg["feedback_submitted"] = True
+                        msg["feedback_rating"] = "not helpful"
+                        st.rerun()
 
 # ---------- User Input ----------
 user_input = st.chat_input("Ask a question about the knowledge base")
@@ -131,14 +152,17 @@ if user_input:
     with st.chat_message("assistant"):
         with st.spinner("Searching the knowledge base and generating a response..."):
             try:
-                response = requests.post(
-                    f"{API_URL}/ask",
-                    json={
-                        "query": user_input,
-                        "session_id": st.session_state.session_id
-                    },
-                    timeout=60
-                )
+                # response = requests.post(
+                #     f"{API_URL}/ask",
+                #     json={
+                #         "query": user_input,
+                #         "session_id": st.session_state.session_id
+                #     },
+                #     timeout=60
+                result = ask(user_input, session_id=st.session_state.session_id)
+                answer = result["answer"]
+                sources = result["sources"]
+                
             except requests.RequestException as e:
                 st.error(f"Request failed: {e}")
                 st.stop()
