@@ -6,7 +6,7 @@ from src.feedback import save_feedback
 from src.web_pipeline import ask_website
 
 st.set_page_config(
-    page_title="Startup Support Assistant",
+    page_title="Website Support AI Assistant",
     page_icon="💬",
     layout="centered"
 )
@@ -55,28 +55,28 @@ with st.sidebar:
     st.divider()
     st.markdown("## About")
     st.caption(
-    "An AI chatbot that answers startup support questions using a custom knowledge base. "
-    "Built with semantic search, LLMs, and user feedback tracking."
+    "An AI assistant that analyzes website content to answer questions about policies, pricing, and support information. Uses semantic search, LLMs, and retrieval-augmented generation (RAG) with source-based responses."
     )
     st.info("⚡ Powered by semantic search + LLM (RAG system)")
 
 # ---------- Header ----------
 st.markdown("""
-<h1 style='text-align: center;'>💬 Startup Support AI Assistant</h1>
+<h1 style='text-align: center;'>💬 Website Support AI Assistant</h1>
 
 <p style='text-align: center; color: gray; max-width: 700px; margin: auto;'>
-This is an AI-powered customer support assistant built using Retrieval-Augmented Generation (RAG).
-It answers questions based on a predefined knowledge base (e.g., billing, subscriptions, account issues).
+This is an AI-powered assistant built using Retrieval-Augmented Generation (RAG). 
+It can analyze website content and answer questions about policies, pricing, and support information in real time.
 </p>
 """, unsafe_allow_html=True)
 
 st.markdown("### 💡 Try asking:")
 
 st.markdown("""
-- How do I cancel my subscription?  
-- How can I reset my password?  
-- When will I get my refund?  
-- How do I update billing info?
+💡 Try asking:
+What is the refund policy of this website?
+Does this company offer free shipping?
+What are the pricing plans?
+How can I cancel a subscription?
 """)
 
 
@@ -148,6 +148,7 @@ for i, msg in enumerate(st.session_state.messages):
                         st.rerun()
 
 # ---------- User Input ----------
+st.info("🌐 Enter a website URL and ask questions about its policies, pricing, or support.")
 website_url = st.text_input("Website URL", placeholder="https://example.com")
 user_input = st.chat_input("Ask a question about this website")
 # user_input = st.chat_input("Ask a question about the knowledge base")
