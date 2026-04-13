@@ -10,8 +10,10 @@ def scrape_website(url: str):
     doc = app.scrape(url, formats=["markdown"])
 
     if hasattr(doc, "markdown"):
+        print(doc.markdown)
         return doc.markdown
     if isinstance(doc, dict) and "markdown" in doc:
+        print(doc["markdown"])
         return doc["markdown"]
 
     raise ValueError("Could not extract website content")
