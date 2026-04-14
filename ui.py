@@ -69,17 +69,15 @@ It can analyze website content and answer questions about policies, pricing, and
 </p>
 """, unsafe_allow_html=True)
 
-st.markdown("### 💡 Try asking:")
-
+st.markdown("#### 💡 Try asking:")
 st.markdown("""
-💡 Try asking:
 What is the refund policy of this website?
 Does this company offer free shipping?
 What are the pricing plans?
 How can I cancel a subscription?
 """)
-st.markdown("""⚠️ Notes
-- Works best on public, text-based web pages - Some websites may block scraping or require JavaScript rendering - Responses are based only on retrieved content (no hallucination intended)""")
+st.markdown("""⚠️ Notes:
+Works best on public, text-based web pages - Some websites may block scraping or require JavaScript rendering - Responses are based only on retrieved content (no hallucination intended)""")
 
 
 # ---------- Chat History ----------
