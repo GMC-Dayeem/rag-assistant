@@ -78,6 +78,8 @@ Does this company offer free shipping?
 What are the pricing plans?
 How can I cancel a subscription?
 """)
+st.markdown("""⚠️ Notes
+- Works best on public, text-based web pages - Some websites may block scraping or require JavaScript rendering - Responses are based only on retrieved content (no hallucination intended)""")
 
 
 # ---------- Chat History ----------
