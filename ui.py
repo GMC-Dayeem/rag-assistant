@@ -63,7 +63,7 @@ with st.sidebar:
 st.markdown("""
 <h1 style='text-align: center;'>💬 Website Support AI Assistant</h1>
 
-<p style='text-align: center; color: gray; max-width: 700px; margin: auto;'>
+<p style='text-align: center; color: gray; max-width: 600px; margin: auto;'>
 This is an AI-powered assistant built using Retrieval-Augmented Generation (RAG). 
 It can analyze website content and answer questions about policies, pricing, and support information in real time.
 </p>
