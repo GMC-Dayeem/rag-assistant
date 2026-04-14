@@ -61,7 +61,7 @@ with st.sidebar:
 
 # ---------- Header ----------
 st.markdown("""
-<h1 style='text-align: center;'>💬 Website Support AI Assistant</h1>
+<h3 style='text-align: center;'>💬 Website Support AI Assistant</h3>
 
 <p style='text-align: center; color: gray; max-width: 600px; margin: auto;'>
 This is an AI-powered assistant built using Retrieval-Augmented Generation (RAG). 
